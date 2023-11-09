@@ -1,26 +1,48 @@
 package com.ca214.uts210040220
 
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.ca214.uts210040220.databinding.ItemTransformListBinding
+import com.ca214.uts210040220.models.CountyModel
 
-class CountryAdapter(val countryList: ArrayList<String>): RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
-
-    private var _binding: ItemTransformListBinding? = null
-    inner class CountryViewHolder(itemBinding: ItemTransformListBinding): RecyclerView.ViewHolder(itemBinding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
-        _binding = ItemTransformListBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-
-        return CountryViewHolder(_binding!!)
+class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
+    class CountryViewHolder(itemBinding: View): RecyclerView.ViewHolder(itemBinding){
+        val imageView : ImageView = itemBinding.findViewById(R.id.countryFlag)
+        val textView : TextView = itemBinding.findViewById(R.id.countryName)
+        val editButton : Button = itemBinding.findViewById(R.id.edit)
+        val deleteButton : Button = itemBinding.findViewById(R.id.delete)
     }
 
+    var onItemClick : ((CountyModel) -> Unit)? = null
+    var onEditClick : ((CountyModel) -> Unit)? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_transform_list, parent, false)
+        return CountryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
+        val country = countryList[position]
+        holder.imageView.setImageResource(country.countryFlag)
+        holder.textView.text = country.countryName
+        holder.editButton.setOnClickListener {v ->
+
+        }
+        holder.itemView.setOnClickListener{
+            println(onItemClick)
+            onItemClick?.invoke(country)
+        }
+
+        holder.deleteButton.setOnClickListener {
+            println("Delete" + country.countryName)
+        }
+
+    }
     override fun getItemCount(): Int {
         return countryList.size
     }
@@ -43,17 +65,4 @@ class CountryAdapter(val countryList: ArrayList<String>): RecyclerView.Adapter<C
         R.drawable.avatar_15,
         R.drawable.avatar_16,
     )
-
-    override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
-        val item = countryList[position]
-
-        holder.itemView.apply {
-            _binding?.countryName?.text = item
-        }
-        holder.itemView.apply {
-            _binding?.countryFlag?.setImageDrawable(
-                ResourcesCompat.getDrawable(holder.itemView.resources, drawables[position], null)
-            )
-        }
-    }
 }

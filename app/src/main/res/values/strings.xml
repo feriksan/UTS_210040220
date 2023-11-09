@@ -13,6 +13,13 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_list">Layout List</string>
     <string name="menu_grid">Layout Grid</string>
+    <string name="add_title">Add</string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Delete</string>
+    <string name="submit_button">Submit</string>
+    <string name="countryNameLabel">Country Name</string>
+    <string name="countryDescLabel">Country Desc</string>
+    <string name="countryRegionLabel">Country Region</string>
 
     <string name="lorem_ipsum_title">Lorem Ipsum"</string>
     <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
