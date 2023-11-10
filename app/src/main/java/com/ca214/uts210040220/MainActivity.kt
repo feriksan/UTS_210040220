@@ -2,28 +2,23 @@ package com.ca214.uts210040220
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Button
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ca214.uts210040220.databinding.ActivityMain2Binding
 import com.ca214.uts210040220.models.CountyModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var countryList : ArrayList<CountyModel>
     private lateinit var countryAdapter: CountryAdapter
-    private lateinit var appBarConfiguration: AppBarConfiguration
-//    private lateinit var binding: ActivityMain2Binding
+    val gson = Gson()
 
     private val LIST_VIEW = "LIST_VIEW"
     private val GRID_VIEW = "GRID_VIEW"
@@ -34,19 +29,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main2)
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
-//        recyclerView.layoutManager = LinearLayoutManager(this)
-
-
-//        binding = ActivityMain2Binding.inflate(layoutInflater)
-//        setContentView(binding.root)
-//        countryList = ArrayList()
-//        countryList.add(CountyModel(R.drawable.avatar_1, "Indonesia"))
-//        countryList.add(CountyModel(R.drawable.avatar_3, "Belanda"))
-//        countryList.add(CountyModel(R.drawable.avatar_2, "England"))
-//
-//        countryAdapter = CountryAdapter(countryList)
-//        recyclerView.adapter = countryAdapter
-//        recyclerView = findViewById(R.id.recyclerView)
+        countryList = getItemList()
+        val json: String = gson.toJson(countryList)
+        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("country", json)
+        editor.apply()
 
         findViewById<FloatingActionButton>(R.id.floatingActionButton).setOnClickListener {
             println("Ganti")
@@ -77,11 +65,15 @@ class MainActivity : AppCompatActivity() {
         list.add(CountyModel(R.drawable.avatar_2, "England"))
         return list
     }
+
     private fun listView(){
         currentView = LIST_VIEW
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        countryAdapter = CountryAdapter(getItemList())
+        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
+        val json = sharedPreferences.getString("country", null)
+        val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
+        val countryListNew = gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
+        countryAdapter = CountryAdapter(countryListNew)
         recyclerView.adapter = countryAdapter
         countryAdapter.onItemClick = {
             val intent = Intent(this, CountryDetail::class.java)
@@ -89,50 +81,38 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         countryAdapter.onEditClick = {
-            val intent = Intent(this, CountryDetail::class.java)
+            val intent = Intent(this, EditCountry::class.java)
             intent.putExtra("country", it)
             startActivity(intent)
+        }
+        countryAdapter.onDeleteClick ={
+            countryAdapter.notifyItemRemoved(countryListNew.indexOf(it))
+            countryListNew.remove(it)
         }
     }
 
     private fun gridView(){
         currentView = GRID_VIEW
         recyclerView.layoutManager = GridLayoutManager(this, 3)
-
-        countryAdapter = CountryAdapter(getItemList())
+        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
+        val json = sharedPreferences.getString("country", null)
+        val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
+        val countryListNew = gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
+        countryAdapter = CountryAdapter(countryListNew)
         recyclerView.adapter = countryAdapter
         countryAdapter.onItemClick = {
             val intent = Intent(this, CountryDetail::class.java)
             intent.putExtra("country", it)
             startActivity(intent)
         }
+        countryAdapter.onEditClick = {
+            val intent = Intent(this, EditCountry::class.java)
+            intent.putExtra("country", it)
+            startActivity(intent)
+        }
+        countryAdapter.onDeleteClick ={
+            countryAdapter.notifyItemRemoved(countryListNew.indexOf(it))
+            countryListNew.remove(it)
+        }
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        val result = super.onCreateOptionsMenu(menu)
-//        // Using findViewById because NavigationView exists in different layout files
-//        // between w600dp and w1240dp
-//        val navView: NavigationView? = findViewById(R.id.nav_view)
-//        if (navView == null) {
-//            // The navigation drawer already has the items including the items in the overflow menu
-//            // We only inflate the overflow menu if the navigation drawer isn't visible
-//            menuInflater.inflate(R.menu.overflow, menu)
-//        }
-//        return result
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.nav_settings -> {
-//                val navController = findNavController(R.id.nav_host_fragment_content_main)
-//                navController.navigate(R.id.nav_settings)
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-//
-//    override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.nav_host_fragment_content_main)
-//        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-//    }
 }

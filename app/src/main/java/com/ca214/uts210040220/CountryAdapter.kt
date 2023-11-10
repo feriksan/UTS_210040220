@@ -20,6 +20,7 @@ class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adap
 
     var onItemClick : ((CountyModel) -> Unit)? = null
     var onEditClick : ((CountyModel) -> Unit)? = null
+    var onDeleteClick : ((CountyModel) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_transform_list, parent, false)
@@ -30,8 +31,9 @@ class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adap
         val country = countryList[position]
         holder.imageView.setImageResource(country.countryFlag)
         holder.textView.text = country.countryName
-        holder.editButton.setOnClickListener {v ->
-
+        holder.editButton.setOnClickListener {
+            println("Edit" + country.countryName)
+            onEditClick?.invoke(country)
         }
         holder.itemView.setOnClickListener{
             println(onItemClick)
@@ -40,6 +42,7 @@ class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adap
 
         holder.deleteButton.setOnClickListener {
             println("Delete" + country.countryName)
+            onDeleteClick?.invoke(country)
         }
 
     }
