@@ -31,13 +31,13 @@ class EditCountry : AppCompatActivity() {
             val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
             val countryListNew = gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
             findViewById<Button>(R.id.submitButtonEdit).setOnClickListener {
-                println(countryListNew.indexOf(country))
                 countryListNew[countryListNew.indexOf(country)] =
-                    CountyModel(R.drawable.avatar_2, name.text.toString(), desc.text.toString())
+                    CountyModel(R.drawable.avatar_2, name.text.toString(), desc.text.toString(), region.text.toString())
                 val json: String = gson.toJson(countryListNew)
                 val editor = sharedPreferences.edit()
                 editor.putString("country", json)
                 editor.apply()
+                onBackPressed()
             }
         }
     }

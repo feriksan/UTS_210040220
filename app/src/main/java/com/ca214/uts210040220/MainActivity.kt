@@ -1,8 +1,10 @@
 package com.ca214.uts210040220
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.navigation.ui.AppBarConfiguration
+import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,9 +26,24 @@ class MainActivity : AppCompatActivity() {
     private val GRID_VIEW = "GRID_VIEW"
     var currentView = LIST_VIEW
 
+    val getResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            val data : ArrayList<CountyModel> = it.data?.getParcelableArrayListExtra("ActivityResult")!!
+            countryAdapter = CountryAdapter(data)
+            countryAdapter.notifyItemInserted(2)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
+        // calling the action bar
+        var actionBar = getSupportActionBar()
+
+        // showing the back button in action bar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+        }
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
         countryList = getItemList()
@@ -46,12 +63,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<FloatingActionButton>(R.id.addButton).setOnClickListener{
-            val intent = Intent(this, AddCountry::class.java)
-            startActivity(intent)
+            countryAdapter = CountryAdapter(countryList)
+            countryAdapter.notifyItemInserted(2)
+//            val intent = Intent(this, AddCountry::class.java)
+////            startActivity(intent)
+//            getResult.launch(intent)
         }
     }
 
+    // this event will enable the back
+    // function to the button on press
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        println("GAnti")
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onContextItemSelected(item)
+    }
+
     private fun getItemList(): ArrayList<CountyModel>{
+        println("GEt Item")
         val list = ArrayList<CountyModel>()
 
         list.add(CountyModel(R.drawable.avatar_1, "Indonesia", "Indonesia (pelafalan dalam bahasa Indonesia: [in.ˈdo.nɛ.sja]), dikenal dengan nama resmi Republik Indonesia atau lebih lengkapnya Negara Kesatuan Republik Indonesia, adalah negara kepulauan di Asia Tenggara yang dilintasi garis khatulistiwa dan berada di antara daratan benua Asia dan Oseania sehingga dikenal sebagai negara lintas benua, serta antara Samudra Pasifik dan Samudra Hindia.\n" +
@@ -69,11 +103,7 @@ class MainActivity : AppCompatActivity() {
     private fun listView(){
         currentView = LIST_VIEW
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
-        val json = sharedPreferences.getString("country", null)
-        val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
-        val countryListNew = gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
-        countryAdapter = CountryAdapter(countryListNew)
+        countryAdapter = CountryAdapter(countryList)
         recyclerView.adapter = countryAdapter
         countryAdapter.onItemClick = {
             val intent = Intent(this, CountryDetail::class.java)
@@ -86,19 +116,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         countryAdapter.onDeleteClick ={
-            countryAdapter.notifyItemRemoved(countryListNew.indexOf(it))
-            countryListNew.remove(it)
+            deleteElement(it)
         }
     }
 
     private fun gridView(){
         currentView = GRID_VIEW
         recyclerView.layoutManager = GridLayoutManager(this, 3)
-        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
-        val json = sharedPreferences.getString("country", null)
-        val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
-        val countryListNew = gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
-        countryAdapter = CountryAdapter(countryListNew)
+        countryAdapter = CountryAdapter(countryList)
         recyclerView.adapter = countryAdapter
         countryAdapter.onItemClick = {
             val intent = Intent(this, CountryDetail::class.java)
@@ -111,8 +136,29 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         countryAdapter.onDeleteClick ={
-            countryAdapter.notifyItemRemoved(countryListNew.indexOf(it))
-            countryListNew.remove(it)
+            deleteElement(it)
         }
+    }
+
+    private fun updateSharedPreference(dataUpdate: ArrayList<CountyModel>){
+        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
+        val json: String = gson.toJson(dataUpdate)
+        val editor = sharedPreferences.edit()
+        editor.putString("country", json)
+        editor.apply()
+    }
+
+    private fun getFromSharedPreference(): ArrayList<CountyModel> {
+        val sharedPreferences = getSharedPreferences("countries", MODE_PRIVATE)
+        val json = sharedPreferences.getString("country", null)
+        val type: Type = object : TypeToken<ArrayList<CountyModel?>?>() {}.type
+        return gson.fromJson<Any>(json, type) as ArrayList<CountyModel>
+    }
+
+    private fun deleteElement(data: CountyModel){
+        countryList.drop(countryList.indexOf(data))
+        updateSharedPreference(countryList)
+        countryAdapter.notifyItemRemoved(countryList.indexOf(data))
+        countryList.remove(data)
     }
 }
