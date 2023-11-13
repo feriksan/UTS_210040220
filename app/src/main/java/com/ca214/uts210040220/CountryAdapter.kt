@@ -31,15 +31,23 @@ class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adap
         val country = countryList[position]
         holder.imageView.setImageResource(country.countryFlag)
         holder.textView.text = country.countryName
+        //Button Edit Handler
         holder.editButton.setOnClickListener {
             println("Edit" + country.countryName)
             onEditClick?.invoke(country)
         }
+        //Item Click Handler
         holder.itemView.setOnClickListener{
             println(onItemClick)
             onItemClick?.invoke(country)
         }
-
+        //Long Click Handler
+        holder.itemView.setOnLongClickListener(){
+            println("Edit" + country.countryName)
+            onEditClick?.invoke(country)
+            true
+        }
+        //Button Delete Handler
         holder.deleteButton.setOnClickListener {
             println("Delete" + country.countryName)
             onDeleteClick?.invoke(country)
@@ -50,22 +58,4 @@ class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adap
         return countryList.size
     }
 
-    private val drawables = listOf(
-        R.drawable.avatar_1,
-        R.drawable.avatar_2,
-        R.drawable.avatar_3,
-        R.drawable.avatar_4,
-        R.drawable.avatar_5,
-        R.drawable.avatar_6,
-        R.drawable.avatar_7,
-        R.drawable.avatar_8,
-        R.drawable.avatar_9,
-        R.drawable.avatar_10,
-        R.drawable.avatar_11,
-        R.drawable.avatar_12,
-        R.drawable.avatar_13,
-        R.drawable.avatar_14,
-        R.drawable.avatar_15,
-        R.drawable.avatar_16,
-    )
 }

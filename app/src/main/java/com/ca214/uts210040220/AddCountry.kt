@@ -14,7 +14,6 @@ import java.lang.reflect.Type
 
 class AddCountry : AppCompatActivity() {
     val gson = Gson()
-    private lateinit var countryAdapter: CountryAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_country2)

@@ -1,5 +1,6 @@
 package com.ca214.uts210040220
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val GRID_VIEW = "GRID_VIEW"
     var currentView = LIST_VIEW
 
+    @SuppressLint("NotifyDataSetChanged")
     val getResult =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()) {
@@ -34,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             countryList = data
             updateSharedPreference(countryList)
             countryAdapter.notifyDataSetChanged();
-//            countryAdapter.notifyItemChanged(2)
     }
     val addResult =
         registerForActivityResult(
