@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,10 +31,20 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()) {
             val data : ArrayList<CountyModel> = it.data?.getParcelableArrayListExtra("ActivityResult")!!
-            countryAdapter = CountryAdapter(data)
-            countryAdapter.notifyItemInserted(2)
+            countryList = data
+            updateSharedPreference(countryList)
+            countryAdapter.notifyDataSetChanged();
+//            countryAdapter.notifyItemChanged(2)
+    }
+    val addResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            val data: CountyModel =
+                it.data?.getParcelableExtra("ActivityResult")!!
+            countryList.add(data)
+            updateSharedPreference(countryList)
+            countryAdapter.notifyItemInserted(countryList.size - 1)
         }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
@@ -63,11 +74,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<FloatingActionButton>(R.id.addButton).setOnClickListener{
-            countryAdapter = CountryAdapter(countryList)
-            countryAdapter.notifyItemInserted(2)
-//            val intent = Intent(this, AddCountry::class.java)
-////            startActivity(intent)
-//            getResult.launch(intent)
+            val intent = Intent(this, AddCountry::class.java)
+            addResult.launch(intent)
         }
     }
 
@@ -85,7 +93,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getItemList(): ArrayList<CountyModel>{
-        println("GEt Item")
         val list = ArrayList<CountyModel>()
 
         list.add(CountyModel(R.drawable.avatar_1, "Indonesia", "Indonesia (pelafalan dalam bahasa Indonesia: [in.ˈdo.nɛ.sja]), dikenal dengan nama resmi Republik Indonesia atau lebih lengkapnya Negara Kesatuan Republik Indonesia, adalah negara kepulauan di Asia Tenggara yang dilintasi garis khatulistiwa dan berada di antara daratan benua Asia dan Oseania sehingga dikenal sebagai negara lintas benua, serta antara Samudra Pasifik dan Samudra Hindia.\n" +
@@ -113,8 +120,10 @@ class MainActivity : AppCompatActivity() {
         countryAdapter.onEditClick = {
             val intent = Intent(this, EditCountry::class.java)
             intent.putExtra("country", it)
-            startActivity(intent)
+//            startActivity(intent)
+            getResult.launch(intent)
         }
+
         countryAdapter.onDeleteClick ={
             deleteElement(it)
         }
@@ -133,10 +142,22 @@ class MainActivity : AppCompatActivity() {
         countryAdapter.onEditClick = {
             val intent = Intent(this, EditCountry::class.java)
             intent.putExtra("country", it)
-            startActivity(intent)
+            getResult.launch(intent)
+//            startActivity(intent)
         }
         countryAdapter.onDeleteClick ={
-            deleteElement(it)
+            val builder = AlertDialog.Builder(this@MainActivity)
+            builder.setMessage("Are you sure you want to Delete?")
+                .setCancelable(false)
+                .setPositiveButton("Yes") { dialog, id ->
+                    deleteElement(it)
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    // Dismiss the dialog
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
         }
     }
 

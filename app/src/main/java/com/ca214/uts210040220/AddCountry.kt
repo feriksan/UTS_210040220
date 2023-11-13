@@ -29,12 +29,13 @@ class AddCountry : AppCompatActivity() {
         val countryRegion : EditText = findViewById(R.id.countryRegionEdit)
         val countryDesc : EditText = findViewById(R.id.countryDescEdit)
         findViewById<Button>(R.id.submitButtonEdit).setOnClickListener {
-            countryListNew.add(CountyModel(R.drawable.avatar_1, countryName.text.toString(), countryDesc.text.toString(), countryRegion.text.toString()))
+            val countryNew : CountyModel = CountyModel(R.drawable.avatar_1, countryName.text.toString(), countryDesc.text.toString(), countryRegion.text.toString())
+            countryListNew.add(countryNew)
             val json: String = gson.toJson(countryListNew)
             val editor = sharedPreferences.edit()
             editor.putString("country", json)
             editor.apply()
-            intent.putExtra("ActivityResult", countryListNew)
+            intent.putExtra("ActivityResult", countryNew)
             setResult(RESULT_OK, intent)
             finish()
             onBackPressed()
@@ -42,7 +43,9 @@ class AddCountry : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        print("SA")
+        intent.putExtra("ActivityResult", "")
+        setResult(RESULT_OK, intent)
+        finish()
         onBackPressed()
         return true
     }
