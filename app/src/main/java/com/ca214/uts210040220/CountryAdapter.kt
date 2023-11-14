@@ -1,6 +1,10 @@
 package com.ca214.uts210040220
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ca214.uts210040220.models.CountyModel
+import java.util.concurrent.Executors
 
 class CountryAdapter(val countryList: ArrayList<CountyModel>): RecyclerView.Adapter<CountryAdapter.CountryViewHolder>() {
     class CountryViewHolder(itemBinding: View): RecyclerView.ViewHolder(itemBinding){

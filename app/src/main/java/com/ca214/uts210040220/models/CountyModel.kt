@@ -9,6 +9,7 @@ data class CountyModel(
     var countryDesc: String = "",
     var regionName: String = "",
     var population: Int = 0,
+    var urlBendera: String = "",
     var area: Int = 0,
     var populationDensity: Double = 1.0,
     var coastline: Double = 1.0,
@@ -33,6 +34,7 @@ data class CountyModel(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readInt(),
+        parcel.readString()!!,
         parcel.readInt(),
         parcel.readDouble(),
         parcel.readDouble(),
@@ -60,6 +62,7 @@ data class CountyModel(
         parcel.writeString(regionName)
         parcel.writeInt(population)
         parcel.writeInt(area)
+        parcel.writeString(urlBendera)
         parcel.writeDouble(populationDensity)
         parcel.writeDouble(coastline)
         parcel.writeDouble(netMigration)
