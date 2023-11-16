@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
     // this event will enable the back
     // function to the button on press
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        println("GAnti")
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
@@ -104,6 +103,9 @@ class MainActivity : AppCompatActivity() {
                 "Indonesia adalah negara kesatuan dengan bentuk pemerintahan republik berdasarkan konstitusi yang sah, yaitu Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 (UUD 1945).[20] Berdasarkan UUD 1945 pula, Dewan Perwakilan Rakyat (DPR), Dewan Perwakilan Daerah (DPD), dan Presiden dicalonkan lalu dipilih dalam pemilihan umum."))
         list.add(CountyModel(R.drawable.netherlandflag, "Belanda"))
         list.add(CountyModel(R.drawable.englandflag, "England"))
+        list.add(CountyModel(R.drawable.bendera_cino, "Cino", "Partai Komunis Tiongkok (Hanzi: 中国共产党, dalam bahasa Indonesia disingkat PKT) adalah pendiri dan partai yang berkuasa di Republik Rakyat Tiongkok. Partai Komunis Tiongkok adalah satu-satunya partai yang berkuasa di Tiongkok dan mengizinkan berdirinya delapan partai dan membentuk front untuk kedelapan partai dan berada di bawah pembinaan Partai Komunis. Partai Komunis Tiongkok didirikan pada tahun 1921 oleh Chen Duxiu dan Li Dazhao. Partai Komunis berkembang dengan cepat dan pada tahun 1949 mengusir pemerintahan nasionalis Kuomintang dari daratan Tiongkok, yang berakhir dengan pendirian Republik Rakyat Tiongkok. Partai Komunis juga membawahi angkatan bersenjata terbesar di dunia, Tentara Pembebasan Rakyat.\n" +
+                "\n" +
+                "Sejak bubarnya rezim komunis Eropa Timur pada tahun 1989–1990 dan bubarnya Uni Soviet pada tahun 1991, Partai Komunis Tiongkok telah menjalin hubungan antar partai dengan partai partai yang memimpin di negara-negara sosialis yang masih ada."))
         return list
     }
 
